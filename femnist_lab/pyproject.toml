@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "irds-fe"
+version = "1.0.0"
+description = ""
+license = "Apache-2.0"
+dependencies = [
+    "flwr[simulation]>=1.11.1",
+    "flwr-datasets[vision]>=0.3.0",
+    "torch==2.2.1",
+    "torchvision==0.17.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
+
+[tool.flwr.app]
+publisher = "Mila"
+
+[tool.flwr.app.components]
+serverapp = "irds_fe.server_app:app"
+clientapp = "irds_fe.client_app:app"
+
+[tool.flwr.app.config]
+# Base parameters (always present)
+num-server-rounds = 100
+fraction-fit = 1.0
+local-epochs = 15
+latent-dim = 7
+hidden-dim = 256
+num-supernodes = 7
+learning-rate = 0.0001
+batch-size = 32
+gamma = 0.1
+step = 5
+strategy = "fedadam"
+beta_2 = 0.99
+beta_1 = 0.9
+eta = 0.01
+
+# Early Stopping Parameters (always present)
+patience = 15
+min_delta = 0.000
+
+# Strategy-specific parameters will be added/removed dynamically by the script
+
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 7
